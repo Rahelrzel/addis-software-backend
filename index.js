@@ -21,6 +21,9 @@ app.use(express.json());
 app.set("view engine", "ejs");
 app.use(express.static("views"));
 
+app.use(express.json()); // OK for POST/PUT/PATCH
+app.use(express.urlencoded({ extended: true }));
+
 app.use("/api", testRoute);
 app.use("/register", registerRoute);
 app.use("/login", loginRoute);
