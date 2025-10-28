@@ -1,13 +1,60 @@
 import Song from "../models/song.js";
+import Playlist from "../models/playlist.js";
 
 // CREATE SONG
 export const createSong = async (req, res) => {
   try {
-    const song = new Song(req.body);
+    const {
+      id,
+      name,
+      title,
+      artist,
+      album,
+      genre,
+      image,
+      preview_url,
+      external_url,
+      spotifyUrl,
+      playlistId,
+    } = req.body;
+
+    const normalizedSong = {
+      title: title || name,
+      artist,
+      album,
+      genre: genre || "Unknown",
+      image,
+      preview_url: preview_url ?? null,
+      spotifyUrl:
+        spotifyUrl ||
+        external_url ||
+        (id ? `https://open.spotify.com/track/${id}` : null),
+      playlistId: playlistId || null, // ✅ optional association
+    };
+
+    const song = new Song(normalizedSong);
     await song.save();
-    res.status(201).json(song);
+
+    // If playlistId is provided, link the song to that playlist
+    let playlist = null;
+    if (playlistId) {
+      playlist = await Playlist.findByIdAndUpdate(
+        playlistId,
+        { $push: { songs: song._id } },
+        { new: true }
+      ).populate("songs");
+    }
+
+    res.status(201).json({
+      message: playlist
+        ? "Song added and linked to playlist successfully"
+        : "Song added successfully (not linked to any playlist)",
+      song,
+      playlist,
+    });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    console.error("Create song error:", error);
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -24,7 +71,10 @@ export const getSongs = async (req, res) => {
     if (req.query.genre)
       query.genre = { $regex: req.query.genre, $options: "i" };
 
-    const songs = await Song.find(query);
+    const songs = await Song.find(query).populate(
+      "playlistId",
+      "name description"
+    );
     res.status(200).json(songs);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -34,7 +84,10 @@ export const getSongs = async (req, res) => {
 // GET SINGLE SONG
 export const getSongById = async (req, res) => {
   try {
-    const song = await Song.findById(req.params.id);
+    const song = await Song.findById(req.params.id).populate(
+      "playlistId",
+      "name description"
+    );
     if (!song) return res.status(404).json({ error: "Song not found" });
     res.status(200).json(song);
   } catch (error) {
@@ -48,10 +101,12 @@ export const updateSong = async (req, res) => {
     const song = await Song.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
+
     if (!song) return res.status(404).json({ error: "Song not found" });
+
     res.status(200).json(song);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -60,7 +115,13 @@ export const deleteSong = async (req, res) => {
   try {
     const song = await Song.findByIdAndDelete(req.params.id);
     if (!song) return res.status(404).json({ error: "Song not found" });
-    res.status(200).json({ message: "Song deleted" });
+
+    // Remove song reference from its playlist
+    await Playlist.findByIdAndUpdate(song.playlistId, {
+      $pull: { songs: song._id },
+    });
+
+    res.status(200).json({ message: "Song deleted successfully" });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

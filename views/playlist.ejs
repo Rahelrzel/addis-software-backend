@@ -1,24 +1,12 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>My Playlist</title>
-  </head>
-  <body>
-    <h1><%= playlist.name %></h1>
-
-    <ul>
-      <% playlist.songs.forEach(song => { %>
-      <li>
-        <img src="<%= song.image %>" width="100" />
-        <p><%= song.title %> - <%= song.artist %></p>
-        <a href="<%= song.external_url %>" target="_blank">Open on Spotify</a>
-        <% if (song.preview_url) { %>
-        <audio controls src="<%= song.preview_url %>"></audio>
-        <% } else { %>
-        <p>No preview available</p>
-        <% } %>
-      </li>
-      <% }) %>
-    </ul>
-  </body>
-</html>
+<? songs.forEach(song =>
+{ ?>
+<div class="song">
+  <img src="<?= song.artwork ?>" alt="cover" />
+  <p>
+    <?= song.title ?>
+    –
+    <?= song.artist ?>
+  </p>
+  <audio controls src="<?= song.stream_url ?>"></audio>
+</div>
+<? }) ?>

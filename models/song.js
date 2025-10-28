@@ -5,9 +5,14 @@ const songSchema = new mongoose.Schema({
   artist: { type: String, required: true },
   album: { type: String, required: true },
   genre: { type: String, required: true },
-  spotifyUrl: { type: String }, // Spotify track URL (optional)
-  preview_url: { type: String }, // short audio preview (from Spotify)
-  image: { type: String }, // album cover image
+  spotifyUrl: { type: String },
+  preview_url: { type: String },
+  image: { type: String },
+  playlistId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Playlist",
+    required: false, // ✅ make optional
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

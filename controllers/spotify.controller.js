@@ -25,6 +25,7 @@ export const searchTracks = async (req, res, next) => {
       preview_url: track.preview_url,
       image: track.album.images[0]?.url,
       external_url: track.external_urls.spotify,
+      genre: track.album.genres ? track.album.genres[0] : "Unknown",
     }));
 
     res.json({ success: true, data: simplifiedTracks });

@@ -1,28 +1,29 @@
 import express from "express";
-
 import {
   createSong,
+  getSongs,
+  getSongById,
   updateSong,
   deleteSong,
-  getSongById,
-  getSongs,
   getStats,
-} from "../controllers/song.Controller.js";
-import { validateBody } from "../middlewares/validateBody.middleware.js";
+} from "../controllers/song.controller.js";
 import {
   createSongSchema,
   updateSongSchema,
-} from "../schema/songValidation.js";
+} from "../validations/songValidation.js";
+import { validateBody } from "../middlewares/validateBody.middleware.js";
+import { authenticateUser } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-// CRUD routes with middleware
-router.post("/", validateBody(createSongSchema), createSong);
-router.put("/:id", validateBody(updateSongSchema), updateSong);
+// ROUTES
+router.use(authenticateUser);
 
+router.post("/", validateBody(createSongSchema), createSong); // ✅ validate before creating
 router.get("/", getSongs);
 router.get("/stats", getStats);
 router.get("/:id", getSongById);
+router.put("/:id", validateBody(updateSongSchema), updateSong); // ✅ validate before updating
 router.delete("/:id", deleteSong);
 
 export default router;
