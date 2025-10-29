@@ -1,4 +1,5 @@
 import axios from "axios";
+import { env } from "../config/env.config.js";
 
 let spotifyToken = null;
 let tokenExpiresAt = null;
@@ -7,12 +8,12 @@ export const getSpotifyToken = async () => {
   const now = Date.now();
 
   if (spotifyToken && tokenExpiresAt && now < tokenExpiresAt) {
-    return spotifyToken; // still valid
+    return spotifyToken;
   }
 
   try {
     const response = await axios.post(
-      "https://accounts.spotify.com/api/token",
+      env.SPOTIFY_TOKEN_URL,
       new URLSearchParams({ grant_type: "client_credentials" }).toString(),
       {
         headers: {
@@ -20,7 +21,7 @@ export const getSpotifyToken = async () => {
           Authorization:
             "Basic " +
             Buffer.from(
-              `${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`
+              `${env.SPOTIFY_CLIENT_ID}:${env.SPOTIFY_CLIENT_SECRET}`
             ).toString("base64"),
         },
       }

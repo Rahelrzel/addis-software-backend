@@ -10,7 +10,7 @@ import {
 import {
   createSongSchema,
   updateSongSchema,
-} from "../validations/songValidation.js";
+} from "../validations/song.validation.js";
 import { validateBody } from "../middlewares/validateBody.middleware.js";
 import { authenticateUser } from "../middlewares/auth.middleware.js";
 

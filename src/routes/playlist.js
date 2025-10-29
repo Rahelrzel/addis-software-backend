@@ -13,7 +13,7 @@ import {
 import {
   createPlaylistSchema,
   updatePlaylistSchema,
-} from "../validations/playlistValidation.js";
+} from "../validations/playlist.validation.js";
 
 import { validateBody } from "../middlewares/validateBody.middleware.js";
 import { authenticateUser } from "../middlewares/auth.middleware.js";

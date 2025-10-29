@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import express from "express";
-import dotenv from "dotenv";
+import { env } from "../config/env.config.js";
 import cors from "cors";
 
 import testRoute from "./routes/test.js";
@@ -15,10 +15,11 @@ import playlistRoutes from "./routes/playlist.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
+import connectDB from "../config/db.config.js";
+import { errorMiddleware } from "./middlewares/error.middleware.js";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-dotenv.config();
 
 const app = express();
 app.use(cors());
@@ -37,12 +38,10 @@ app.use("/song", songRoute);
 app.use("/api/spotify", testSpotifyAuth);
 app.use("/api/spotify", spotifyRoutes);
 app.use("/playlist", playlistRoutes);
+app.use(errorMiddleware);
 
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+connectDB();
 
-app.listen(process.env.PORT || 3000, () =>
-  console.log(`🚀 Server running on port ${process.env.PORT || 3000}`)
-);
+app.listen(env.PORT, () => {
+  console.log(`Server running on port ${env.PORT}`);
+});
