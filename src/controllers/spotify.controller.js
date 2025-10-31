@@ -1,15 +1,16 @@
-// controllers/spotifyController.js
 import axios from "axios";
+import { getSpotifyToken } from "../utils/spotifyAuth.js";
 import { dbQuery } from "../middlewares/error.middleware.js";
 import HttpError from "../utils/HttpError.js";
 
 export const searchTracks = dbQuery(async (req, res) => {
   const { query } = req.query;
-  const token = req.spotifyToken; // token from middleware
 
   if (!query) {
     throw new HttpError({ status: 400, message: "Query is required" });
   }
+
+  const token = await getSpotifyToken();
 
   const response = await axios.get("https://api.spotify.com/v1/search", {
     headers: { Authorization: `Bearer ${token}` },

@@ -3,7 +3,6 @@ import Playlist from "../models/playlist.js";
 import HttpError from "../utils/HttpError.js";
 import { dbQuery } from "../middlewares/error.middleware.js";
 
-// CREATE SONG
 export const createSong = dbQuery(async (req, res) => {
   const {
     id,
@@ -36,7 +35,6 @@ export const createSong = dbQuery(async (req, res) => {
   const song = new Song(normalizedSong);
   await song.save();
 
-  // Link song to playlist if playlistId is provided
   let playlist = null;
   if (playlistId) {
     playlist = await Playlist.findByIdAndUpdate(
@@ -57,7 +55,6 @@ export const createSong = dbQuery(async (req, res) => {
   });
 });
 
-// GET ALL SONGS (with optional search/filter)
 export const getSongs = dbQuery(async (req, res) => {
   const query = {};
   if (req.query.title) query.title = { $regex: req.query.title, $options: "i" };
@@ -73,7 +70,6 @@ export const getSongs = dbQuery(async (req, res) => {
   res.status(200).json(songs);
 });
 
-// GET SINGLE SONG
 export const getSongById = dbQuery(async (req, res) => {
   const song = await Song.findById(req.params.id).populate(
     "playlistId",
@@ -83,7 +79,6 @@ export const getSongById = dbQuery(async (req, res) => {
   res.status(200).json(song);
 });
 
-// UPDATE SONG
 export const updateSong = dbQuery(async (req, res) => {
   const song = await Song.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
@@ -92,7 +87,6 @@ export const updateSong = dbQuery(async (req, res) => {
   res.status(200).json(song);
 });
 
-// DELETE SONG
 export const deleteSong = dbQuery(async (req, res) => {
   const song = await Song.findByIdAndDelete(req.params.id);
   if (!song) throw new HttpError({ status: 404, message: "Song not found" });
@@ -106,7 +100,6 @@ export const deleteSong = dbQuery(async (req, res) => {
   res.status(200).json({ message: "Song deleted successfully" });
 });
 
-// SONG STATISTICS
 export const getStats = dbQuery(async (req, res) => {
   const totalSongs = await Song.countDocuments();
 
