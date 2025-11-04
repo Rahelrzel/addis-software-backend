@@ -2,16 +2,24 @@ import mongoose from "mongoose";
 
 const songSchema = new mongoose.Schema({
   title: { type: String, required: true },
-  artist: { type: String, required: true },
-  album: { type: String, required: true },
-  genre: { type: String, required: true },
+  artistId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Artist",
+    required: true,
+  },
+  albumId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Album",
+    required: true,
+  },
+
   spotifyUrl: { type: String },
   preview_url: { type: String },
   image: { type: String },
   playlistId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Playlist",
-    required: false, // ✅ make optional
+    required: false,
   },
   createdAt: { type: Date, default: Date.now },
 });
