@@ -24,25 +24,14 @@ export const getPlaylists = dbQuery(async (req, res) => {
   if (req.query.name) query.name = { $regex: req.query.name, $options: "i" };
   if (req.query.description)
     query.description = { $regex: req.query.description, $options: "i" };
-  if (req.query.isPublished !== undefined)
-    query.isPublished = req.query.isPublished === "true";
+
+  query.$or = [{ userId: req.user.id }, { isPublished: true }];
 
   const playlists = await Playlist.find(query)
     .populate("songs", "title artist album genre")
     .populate("userId", "username email");
 
   res.status(200).json(playlists);
-});
-
-export const getPlaylistById = dbQuery(async (req, res) => {
-  const playlist = await Playlist.findById(req.params.id)
-    .populate("songs", "title artist album genre")
-    .populate("userId", "username email");
-
-  if (!playlist)
-    throw new HttpError({ status: 404, message: "Playlist not found" });
-
-  res.status(200).json(playlist);
 });
 
 export const updatePlaylist = dbQuery(async (req, res) => {
