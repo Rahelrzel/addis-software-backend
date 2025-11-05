@@ -12,6 +12,13 @@ const songSchema = new mongoose.Schema({
     ref: "Album",
     required: true,
   },
+  genre: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Genre",
+      required: true,
+    },
+  ],
 
   spotifyUrl: { type: String },
   preview_url: { type: String },

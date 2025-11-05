@@ -1,13 +1,17 @@
 import { z } from "zod";
 
+const objectIdSchema = z
+  .string()
+  .regex(/^[0-9a-fA-F]{24}$/, "Invalid ID format");
+
 export const createSongSchema = z
   .object({
-    id: z.string().optional(), // Spotify ID
-    name: z.string().optional(), // Spotify track name
-    title: z.string().optional(), // our own field
+    title: z.string().optional(),
     artist: z.string().min(1, "Artist is required"),
     album: z.string().min(1, "Album is required"),
-    genre: z.string().optional().default("Unknown"), // optional if Spotify doesn’t send genre
+
+    genre: z.array(objectIdSchema, { required_error: "Genre is required" }),
+
     preview_url: z.string().nullable().optional(),
     image: z.string().url("Invalid image URL").optional(),
     external_url: z.string().url("Invalid Spotify URL").optional(),
@@ -23,7 +27,9 @@ export const updateSongSchema = z.object({
   title: z.string().min(1).optional(),
   artist: z.string().min(1).optional(),
   album: z.string().min(1).optional(),
-  genre: z.string().min(1).optional(),
+
+  genre: z.array(objectIdSchema).optional(),
+
   spotifyUrl: z.string().url().optional(),
   preview_url: z.string().url().optional(),
   image: z.string().url().optional(),
