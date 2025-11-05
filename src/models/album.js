@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { string } from "zod";
 
 const albumSchema = new mongoose.Schema(
   {
@@ -8,8 +9,8 @@ const albumSchema = new mongoose.Schema(
       trim: true,
     },
     releaseYear: {
-      type: Number,
-      required: true,
+      type: String,
+      required: false,
     },
     artistId: {
       type: mongoose.Schema.Types.ObjectId,
