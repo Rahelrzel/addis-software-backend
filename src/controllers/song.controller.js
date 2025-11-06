@@ -5,36 +5,31 @@ import { dbQuery } from "../middlewares/error.middleware.js";
 
 export const createSong = dbQuery(async (req, res) => {
   const {
-    id,
-    name,
     title,
-    artist,
-    album,
+    artistId,
+    albumId,
     genre,
-    image,
-    preview_url,
-    external_url,
     spotifyUrl,
+
+    image,
     playlistId,
   } = req.body;
 
-  const normalizedSong = {
-    title: title || name,
-    artist,
-    album,
-    genre: genre || "Unknown",
-    image,
-    preview_url: preview_url ?? null,
-    spotifyUrl:
-      spotifyUrl ||
-      external_url ||
-      (id ? `https://open.spotify.com/track/${id}` : null),
-    playlistId: playlistId || null,
-  };
+  // ✅ Create and save song directly (already validated by Zod middleware)
+  const song = new Song({
+    title,
+    artistId,
+    albumId,
+    genre,
+    spotifyUrl,
 
-  const song = new Song(normalizedSong);
+    image,
+    playlistId: playlistId || null,
+  });
+
   await song.save();
 
+  // ✅ If a playlistId was provided, update that playlist
   let playlist = null;
   if (playlistId) {
     playlist = await Playlist.findByIdAndUpdate(
@@ -42,14 +37,16 @@ export const createSong = dbQuery(async (req, res) => {
       { $push: { songs: song._id } },
       { new: true }
     ).populate("songs");
-    if (!playlist)
+
+    if (!playlist) {
       throw new HttpError({ status: 404, message: "Playlist not found" });
+    }
   }
 
   res.status(201).json({
     message: playlist
       ? "Song added and linked to playlist successfully"
-      : "Song added successfully (not linked to any playlist)",
+      : "Song added successfully",
     song,
     playlist,
   });

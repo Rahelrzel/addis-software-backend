@@ -38,7 +38,15 @@ export const getPlaylistById = dbQuery(async (req, res) => {
   const { id } = req.params;
 
   const playlist = await Playlist.findById(id)
-    .populate("songs", "title artist album genre")
+    .populate({
+      path: "songs",
+      select: "title artistId albumId genre image spotifyUrl", // include image
+      populate: [
+        { path: "artistId", select: "name" }, // artist name
+        { path: "albumId", select: "name" }, // album name (not title)
+        { path: "genre", select: "name" }, // populate genres
+      ],
+    })
     .populate("userId", "username email");
 
   if (!playlist) {

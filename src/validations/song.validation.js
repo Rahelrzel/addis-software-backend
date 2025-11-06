@@ -1,37 +1,22 @@
 import { z } from "zod";
 
+// ✅ Define reusable ObjectId schema
 const objectIdSchema = z
   .string()
   .regex(/^[0-9a-fA-F]{24}$/, "Invalid ID format");
 
+// ✅ Validation schemas
 export const createSongSchema = z
   .object({
-    title: z.string().optional(),
-    artist: z.string().min(1, "Artist is required"),
-    album: z.string().min(1, "Album is required"),
-
-    genre: z.array(objectIdSchema, { required_error: "Genre is required" }),
-
-    preview_url: z.string().nullable().optional(),
-    image: z.string().url("Invalid image URL").optional(),
-    external_url: z.string().url("Invalid Spotify URL").optional(),
+    title: z.string().min(1, "Title is required"),
+    artistId: objectIdSchema, // no parentheses
+    albumId: objectIdSchema,
+    genre: z.array(objectIdSchema).nonempty("At least one genre is required"),
     spotifyUrl: z.string().url("Invalid Spotify URL").optional(),
-    playlistId: z.string().optional(),
+
+    image: z.string().url("Invalid image URL").optional(),
+    playlistId: objectIdSchema.optional(),
   })
-  .refine((data) => data.title || data.name, {
-    message: "Either 'title' or 'name' must be provided",
-    path: ["title"],
-  });
+  .strict();
 
-export const updateSongSchema = z.object({
-  title: z.string().min(1).optional(),
-  artist: z.string().min(1).optional(),
-  album: z.string().min(1).optional(),
-
-  genre: z.array(objectIdSchema).optional(),
-
-  spotifyUrl: z.string().url().optional(),
-  preview_url: z.string().url().optional(),
-  image: z.string().url().optional(),
-  playlistId: z.string().optional(),
-});
+export const updateSongSchema = createSongSchema.partial();
