@@ -1,6 +1,9 @@
 import express from "express";
 
-import { createSongSchema } from "../validations/song.validation.js";
+import {
+  createSongSchema,
+  updateSongSchema,
+} from "../validations/song.validation.js";
 import { validateBody } from "../middlewares/validateBody.middleware.js";
 import { authenticateUser } from "../middlewares/auth.middleware.js";
 import {
@@ -21,7 +24,7 @@ router.post("/", validateBody(createSongSchema), createSong); // ✅ validate be
 router.get("/", getSongs);
 router.get("/stats", getStats);
 router.get("/:id", getSongById);
-router.put("/:id", validateBody, updateSong); // ✅ validate before updating
+router.put("/:id", validateBody(updateSongSchema), updateSong); // ✅ validate before updating
 router.delete("/:id", deleteSong);
 
 export default router;

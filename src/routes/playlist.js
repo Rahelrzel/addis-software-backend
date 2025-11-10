@@ -31,7 +31,6 @@ router.get("/stats", getPlaylistStats);
 router.put("/:id", validateBody(updatePlaylistSchema), updatePlaylist);
 router.delete("/:id", deletePlaylist);
 
-// New routes for adding/removing songs
 router.post("/add-song", addSongToPlaylist);
 router.post("/remove-song", removeSongFromPlaylist);
 

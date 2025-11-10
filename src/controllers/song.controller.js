@@ -28,7 +28,6 @@ export const createSong = dbQuery(async (req, res) => {
 
   await song.save();
 
-  // ✅ If a playlistId was provided, update that playlist
   let playlist = null;
   if (playlistId) {
     playlist = await Playlist.findByIdAndUpdate(
@@ -67,10 +66,12 @@ export const getSongs = dbQuery(async (req, res) => {
 });
 
 export const getSongById = dbQuery(async (req, res) => {
-  const song = await Song.findById(req.params.id).populate(
-    "playlistId",
-    "name description"
-  );
+  const song = await Song.findById(req.params.id)
+    .populate("playlistId", "name description")
+    .populate("artistId", "name")
+    .populate("albumId", "name")
+    .populate("genre", "name");
+
   if (!song) throw new HttpError({ status: 404, message: "Song not found" });
   res.status(200).json(song);
 });

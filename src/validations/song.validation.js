@@ -1,11 +1,9 @@
 import { z } from "zod";
 
-// ✅ Define reusable ObjectId schema
 const objectIdSchema = z
   .string()
   .regex(/^[0-9a-fA-F]{24}$/, "Invalid ID format");
 
-// ✅ Validation schemas
 export const createSongSchema = z
   .object({
     title: z.string().min(1, "Title is required"),
