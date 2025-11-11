@@ -51,17 +51,25 @@ export const createSong = dbQuery(async (req, res) => {
 });
 
 export const getSongs = dbQuery(async (req, res) => {
-  const query = {};
-  if (req.query.title) query.title = { $regex: req.query.title, $options: "i" };
-  if (req.query.artist)
-    query.artist = { $regex: req.query.artist, $options: "i" };
-  if (req.query.album) query.album = { $regex: req.query.album, $options: "i" };
-  if (req.query.genre) query.genre = { $regex: req.query.genre, $options: "i" };
+  const search = req.query.q?.toString() || "";
 
-  const songs = await Song.find(query).populate(
-    "playlistId",
-    "name description"
-  );
+  const query = search
+    ? {
+        $or: [
+          { title: { $regex: search, $options: "i" } },
+          { "artistId.name": { $regex: search, $options: "i" } },
+          { "albumId.name": { $regex: search, $options: "i" } },
+          { "genre.name": { $regex: search, $options: "i" } },
+        ],
+      }
+    : {};
+
+  const songs = await Song.find(query)
+    .populate("artistId", "name")
+    .populate("albumId", "name")
+    .populate("genre", "name")
+    .populate("playlistId", "name description");
+
   res.status(200).json(songs);
 });
 

@@ -13,7 +13,7 @@ import {
   getSongs,
   getStats,
   updateSong,
-} from "../controllers/song.controller.js";
+} from "../controllers/song.Controller.js";
 
 const router = express.Router();
 

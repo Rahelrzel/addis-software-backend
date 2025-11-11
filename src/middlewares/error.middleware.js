@@ -15,7 +15,6 @@ export const errorMiddleware = (error, req, res, _next) => {
     .json({ message: error.message ?? "Oops, something went wrong!" });
 };
 
-// Wrapper to simplify async controllers
 export const dbQuery = (fn) => (req, res, next) => {
   Promise.resolve(fn(req, res, next)).catch(next);
 };

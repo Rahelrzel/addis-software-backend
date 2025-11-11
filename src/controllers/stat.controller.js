@@ -4,10 +4,6 @@ import Artist from "../models/artist.js";
 import Album from "../models/album.js";
 import Genre from "../models/genre.js";
 
-/**
- * @desc Get total numbers of songs, artists, albums, and genres
- * @route GET /api/stats/totals
- */
 export const getTotals = dbQuery(async (_req, res) => {
   const [songsCount, artistsCount, albumsCount, genresCount] =
     await Promise.all([
@@ -25,10 +21,6 @@ export const getTotals = dbQuery(async (_req, res) => {
   });
 });
 
-/**
- * @desc Get number of songs in each genre
- * @route GET /api/stats/songs-by-genre
- */
 export const getSongsByGenre = dbQuery(async (_req, res) => {
   const genres = await Genre.find();
 
@@ -45,10 +37,6 @@ export const getSongsByGenre = dbQuery(async (_req, res) => {
   res.status(200).json(data);
 });
 
-/**
- * @desc Get number of songs and albums for each artist
- * @route GET /api/stats/artist-stats
- */
 export const getArtistStats = dbQuery(async (_req, res) => {
   const artists = await Artist.find();
 
@@ -70,10 +58,6 @@ export const getArtistStats = dbQuery(async (_req, res) => {
   res.status(200).json(data);
 });
 
-/**
- * @desc Get number of songs in each album
- * @route GET /api/stats/album-stats
- */
 export const getAlbumStats = dbQuery(async (_req, res) => {
   const albums = await Album.find().populate("artistId", "name");
 

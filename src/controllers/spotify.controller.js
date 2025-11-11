@@ -12,13 +12,11 @@ export const searchTracks = dbQuery(async (req, res) => {
 
   const token = await getSpotifyToken();
 
-  // ✅ Request only 10 tracks
   const response = await axios.get("https://api.spotify.com/v1/search", {
     headers: { Authorization: `Bearer ${token}` },
     params: { q: query, type: "track", limit: 10 },
   });
 
-  // ✅ Simplify the data
   const simplifiedTracks = response.data.tracks.items.map((track) => ({
     id: track.id,
     title: track.name,
