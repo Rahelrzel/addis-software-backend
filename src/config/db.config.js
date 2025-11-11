@@ -1,4 +1,3 @@
-// config/db.js
 import mongoose from "mongoose";
 import { env } from "./env.config.js";
 
@@ -8,7 +7,7 @@ const connectDB = async () => {
     console.log("MongoDB connected successfully");
   } catch (error) {
     console.error("MongoDB connection error:", error.message);
-    process.exit(1); // stop the app if DB fails to connect
+    process.exit(1);
   }
 };
 
