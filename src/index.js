@@ -1,4 +1,5 @@
 import express from "express";
+
 import { env } from "./config/env.config.js";
 import cors from "cors";
 import path from "path";

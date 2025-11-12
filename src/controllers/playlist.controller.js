@@ -40,11 +40,11 @@ export const getPlaylistById = dbQuery(async (req, res) => {
   const playlist = await Playlist.findById(id)
     .populate({
       path: "songs",
-      select: "title artistId albumId genre image spotifyUrl", // include image
+      select: "title artistId albumId genre image spotifyUrl",
       populate: [
-        { path: "artistId", select: "name" }, // artist name
-        { path: "albumId", select: "name" }, // album name (not title)
-        { path: "genre", select: "name" }, // populate genres
+        { path: "artistId", select: "name" },
+        { path: "albumId", select: "name" },
+        { path: "genre", select: "name" },
       ],
     })
     .populate("userId", "username email");
@@ -102,16 +102,9 @@ export const getPlaylistStats = dbQuery(async (_req, res) => {
     isPublished: true,
   });
 
-  const playlistsWithMostSongs = await Playlist.aggregate([
-    { $project: { name: 1, songsCount: { $size: "$songs" } } },
-    { $sort: { songsCount: -1 } },
-    { $limit: 5 },
-  ]);
-
   res.status(200).json({
     totalPlaylists,
     publishedPlaylists,
-    playlistsWithMostSongs,
   });
 });
 

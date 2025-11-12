@@ -16,9 +16,7 @@ const loginController = dbQuery(async (req, res) => {
   if (!valid)
     throw new HttpError({ status: 400, message: "Invalid email or password" });
 
-  const token = jwt.sign({ id: user._id }, env.JWT_SECRET, {
-    expiresIn: env.JWT_EXPIRES_IN,
-  });
+  const token = jwt.sign({ id: user._id }, env.JWT_SECRET);
 
   res.status(200).json({
     success: true,
